@@ -1,6 +1,6 @@
 # Redline Talent | High-Performance Agentic Recruiter
 
-Redline Talent is an advanced, AI-driven talent discovery platform designed to automate and enhance the recruitment lifecycle. Built on a "First Principles" reasoning engine, it transforms static job descriptions into dynamic evaluation rubrics and performs deep-dive candidate analysis using Google's Gemini models and advanced similarity heuristics.
+Redline Talent is an advanced, AI-driven talent discovery platform designed to automate and enhance the recruitment lifecycle. Built on a "First Principles" reasoning engine, it transforms static job descriptions into dynamic evaluation rubrics and performs deep-dive candidate analysis using Google's Gemma 3 models and advanced similarity heuristics.
 
 ---
 
@@ -65,7 +65,7 @@ While standard vector search looks at resumes and JDs separately, our Auditor Ag
 ## Technical Stack
 
 *   **Frontend**: Streamlit (Python)
-*   **Intelligence**: Google Gemini 1.5 Flash
+*   **Intelligence**: Google Gemma 3 4B-IT
 *   **Database**: Supabase (PostgreSQL)
 *   **Data Validation**: Pydantic
 *   **Parsing**: PyMuPDF & python-docx
