@@ -10,10 +10,16 @@ load_dotenv()
 
 class SupabaseManager:
     def __init__(self):
-        self.db_url = os.getenv("SUPABASE_DB_URL")
+        # Try streamlit secrets first, then environment variables
+        try:
+            import streamlit as st
+            self.db_url = st.secrets.get("SUPABASE_DB_URL") or os.getenv("SUPABASE_DB_URL")
+        except ImportError:
+            self.db_url = os.getenv("SUPABASE_DB_URL")
+            
         self.enabled = True
         if not self.db_url:
-            raise ValueError("SUPABASE_DB_URL not found in environment variables")
+            raise ValueError("SUPABASE_DB_URL not found in environment variables or streamlit secrets")
         self.init_tables()
 
     def get_connection(self):

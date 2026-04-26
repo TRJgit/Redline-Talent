@@ -68,9 +68,16 @@ class UnifiedAnalysis(BaseModel):
 
 class AdaptiveRecruiterEngine:
     def __init__(self, api_key: str = None):
+        if not api_key:
+            try:
+                import streamlit as st
+                api_key = st.secrets.get("Gemini_API_Key")
+            except ImportError:
+                pass
+        
         self.api_key = api_key or os.getenv("Gemini_API_Key")
         if not self.api_key:
-            raise ValueError("API Key not found. Please set Gemini_API_Key in .env or provide it.")
+            raise ValueError("API Key not found. Please set Gemini_API_Key in .env or streamlit secrets.")
             
         self.client = genai.Client(api_key=self.api_key)
         self.primary_model = "gemma-3-4b-it"
