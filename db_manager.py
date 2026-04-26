@@ -10,12 +10,17 @@ load_dotenv()
 
 class SupabaseManager:
     def __init__(self):
-        # Try streamlit secrets first, then environment variables
-        try:
-            import streamlit as st
-            self.db_url = st.secrets.get("SUPABASE_DB_URL") or os.getenv("SUPABASE_DB_URL")
-        except ImportError:
-            self.db_url = os.getenv("SUPABASE_DB_URL")
+        # Try environment variables first, then streamlit secrets as fallback
+        self.db_url = os.getenv("SUPABASE_DB_URL")
+        
+        if not self.db_url:
+            try:
+                import streamlit as st
+                # Using st.secrets.get() can still raise StreamlitSecretNotFoundError if no secrets.toml exists
+                self.db_url = st.secrets.get("SUPABASE_DB_URL")
+            except Exception:
+                # If st.secrets is not available or raises an error, we just move on
+                pass
             
         self.enabled = True
         if not self.db_url:
