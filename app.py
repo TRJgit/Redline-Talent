@@ -61,8 +61,12 @@ with st.sidebar:
     
     st.divider()
     with st.expander("Configuration"):
-        st.session_state.api_key = st.text_input("Gemini API Key", type="password", value=st.session_state.api_key)
-        st.session_state.simulate_mail = st.toggle("Simulate Mail Agent", value=st.session_state.simulate_mail)
+        if st.button("Reload from .env"):
+            load_dotenv(override=True)
+            st.session_state.api_key = os.getenv("Gemini_API_Key", "")
+            st.rerun()
+        st.text_input("Gemini API Key", type="password", key="api_key")
+        st.toggle("Simulate Mail Agent", key="simulate_mail")
     
     if st.button("Refresh Data", width='stretch', type="secondary"):
         st.session_state.candidates = db.get_all_candidates()

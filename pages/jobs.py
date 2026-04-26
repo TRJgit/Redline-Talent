@@ -12,6 +12,12 @@ if not db:
     db = SupabaseManager()
     st.session_state.db = db
 
+if "jobs" not in st.session_state:
+    st.session_state.jobs = db.get_all_jobs()
+
+if "show_add_job" not in st.session_state:
+    st.session_state.show_add_job = False
+
 st.markdown('<div class="main-header">Job Management</div>', unsafe_allow_html=True)
 
 if not st.session_state.show_add_job:
@@ -29,8 +35,11 @@ if st.session_state.show_add_job:
         with c1:
             if st.button("💾 Save", type="primary", width='stretch'):
                 if new_title and new_jd:
+                    # Robust ID generation
+                    existing_ids = [int(j['id'].split('_')[1]) for j in st.session_state.jobs if j['id'].startswith('JOB_')]
+                    next_id_num = max(existing_ids) + 1 if existing_ids else 1
                     new_job = {
-                        "id": f"JOB_{len(st.session_state.jobs) + 1:03d}", 
+                        "id": f"JOB_{next_id_num:03d}", 
                         "title": new_title, 
                         "jd": new_jd, 
                         "posted_date": datetime.now().strftime("%Y-%m-%d"), 

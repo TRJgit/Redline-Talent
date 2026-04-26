@@ -102,16 +102,17 @@ class AdaptiveRecruiterEngine:
                 )
                 
                 text = response.text
-                # Try to find JSON block
+                # Try to find JSON block - more robust regex
                 json_match = re.search(r'(\{.*\})', text, re.DOTALL)
                 if json_match:
-                    json_str = json_match.group(1)
+                    json_str = json_match.group(1).strip()
                     parsed_dict = json.loads(json_str)
                     if stats is not None: stats["success"] += 1
                     return schema.model_validate(parsed_dict)
                 else:
-                    # Try direct load if no braces found (though unlikely for valid JSON)
-                    parsed_dict = json.loads(text.strip())
+                    # Try cleaning the whole text as a last resort
+                    cleaned_text = text.strip().replace('```json', '').replace('```', '')
+                    parsed_dict = json.loads(cleaned_text)
                     if stats is not None: stats["success"] += 1
                     return schema.model_validate(parsed_dict)
 
@@ -121,7 +122,7 @@ class AdaptiveRecruiterEngine:
                     time.sleep(wait_time)
                     continue
                 
-                print(f"❌ Gemini Error: {e}")
+                print(f"❌ Gemini Error: {e}\nResponse was: {text if 'text' in locals() else 'No response'}")
                 raise e
 
     def strategist_parse_jd(self, jd_input: str, recruiter_memory: Dict[str, Any], stats: Dict[str, int] = None) -> JDRubric:
@@ -298,13 +299,19 @@ class AdaptiveRecruiterEngine:
         return send_outreach_email(receiver_email, subject, html_body, simulate)
 
     def parser_extract_candidate(self, resume_text: str, candidate_id: str, stats: Dict[str, int] = None) -> Candidate:
-        """Enhanced parser to extract email from resume."""
+        """Enhanced parser to extract candidate details from resume text."""
         prompt = f"""
         Extract candidate information from the following resume text.
-        RESUME TEXT: {resume_text}
-        CANDIDATE ID: {candidate_id}
         
-        CRITICAL: Extract the candidate's email address if present. If not found, use 'candidate@example.com'.
+        RESUME TEXT:
+        {resume_text}
+        
+        STRICT REQUIREMENTS:
+        1. Use EXACTLY "{candidate_id}" for the "id" field.
+        2. Extract the candidate's email address. If not found, use "candidate@example.com".
+        3. For "years_of_experience", provide an integer.
+        4. For "projects", extract specific projects mentioned; if none, provide an empty list.
+        5. For "metadata", set "open_to_work" to True and "last_active_days_ago" to 0 unless the resume indicates otherwise.
         """
         try:
             return self._generate_with_fallback(prompt, Candidate, stats)

@@ -14,6 +14,24 @@ if not db:
     db = SupabaseManager()
     st.session_state.db = db
 
+if "jobs" not in st.session_state:
+    st.session_state.jobs = db.get_all_jobs()
+
+if "candidates" not in st.session_state:
+    st.session_state.candidates = db.get_all_candidates()
+
+if "api_stats" not in st.session_state:
+    st.session_state.api_stats = {"success": 0, "total": 0}
+
+if "analysis_cache" not in st.session_state:
+    st.session_state.analysis_cache = {}
+
+if "recruiter_memory" not in st.session_state:
+    st.session_state.recruiter_memory = db.load_memory()
+
+if "analysis_results" not in st.session_state:
+    st.session_state.analysis_results = None
+
 api_key = st.session_state.get("api_key", "")
 simulate_mail = st.session_state.get("simulate_mail", True)
 
@@ -25,9 +43,8 @@ with st.container(border=True):
     selected_job = next(j for j in st.session_state.jobs if j["title"] == selected_job_title)
     
     if st.button("🚀 RUN ANALYSIS", type="primary", width='stretch'):
-        if not api_key: st.error("MISSING API KEY")
-        else:
-            engine = AdaptiveRecruiterEngine(api_key)
+        try:
+            engine = AdaptiveRecruiterEngine(api_key if api_key else None)
             with st.status("🧠 CORE PROCESSING...", expanded=True) as status:
                 current_stats = st.session_state.api_stats
                 current_cache = st.session_state.analysis_cache
@@ -62,6 +79,8 @@ with st.container(border=True):
                 st.session_state.analysis_results = {"rubric": rubric, "results": results}
                 db.log_action("ANALYSIS_CYCLE", f"Analyzed {len(results)} candidates for {selected_job_title}")
                 status.update(label="ANALYSIS COMPLETE", state="complete")
+        except Exception as e:
+            st.error(f"Analysis Error: {e}")
 
 if st.session_state.analysis_results:
     res = st.session_state.analysis_results

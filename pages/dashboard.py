@@ -11,6 +11,15 @@ if not db:
     db = SupabaseManager()
     st.session_state.db = db
 
+if "candidates" not in st.session_state:
+    st.session_state.candidates = db.get_all_candidates()
+
+if "jobs" not in st.session_state:
+    st.session_state.jobs = db.get_all_jobs()
+
+if "api_stats" not in st.session_state:
+    st.session_state.api_stats = {"success": 0, "total": 0}
+
 st.markdown('<div class="main-header">Dashboard</div>', unsafe_allow_html=True)
 
 new_matches_count = len([c for c in st.session_state.candidates if c.get('metadata', {}).get('last_active_days_ago', 10) <= 3])

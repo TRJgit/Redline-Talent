@@ -79,6 +79,17 @@ class SupabaseManager:
                         UPDATED_AT TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                     )
                     """)
+                    
+                    # Auto-Migration: Ensure columns exist (for users with older DB schemas)
+                    cur.execute("ALTER TABLE CANDIDATES ADD COLUMN IF NOT EXISTS \"current_role\" TEXT")
+                    cur.execute("ALTER TABLE CANDIDATES ADD COLUMN IF NOT EXISTS EMAIL TEXT")
+                    cur.execute("ALTER TABLE CANDIDATES ADD COLUMN IF NOT EXISTS YEARS_OF_EXPERIENCE INTEGER")
+                    cur.execute("ALTER TABLE CANDIDATES ADD COLUMN IF NOT EXISTS SKILLS TEXT")
+                    cur.execute("ALTER TABLE CANDIDATES ADD COLUMN IF NOT EXISTS PROJECTS TEXT")
+                    cur.execute("ALTER TABLE CANDIDATES ADD COLUMN IF NOT EXISTS METADATA TEXT")
+                    
+                    # Also for JOBS just in case
+                    cur.execute("ALTER TABLE JOBS ADD COLUMN IF NOT EXISTS METADATA TEXT")
         finally:
             conn.close()
 
