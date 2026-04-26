@@ -72,24 +72,3 @@ While standard vector search looks at resumes and JDs separately, our Auditor Ag
 
 ---
 
-## Setup & Installation
-
-1. **Clone & Install**
-   ```bash
-   git clone <repository-url>
-   pip install -r requirements.txt
-   ```
-
-2. **Configure Environment**
-   Create a `.env` file:
-   ```env
-   Gemini_API_Key=your_key
-   SUPABASE_DB_URL=your_postgresql_uri
-   SENDER_EMAIL=your_email
-   EMAIL_PASSWORD=your_app_password
-   ```
-
-3. **Run Application**
-   ```bash
-   streamlit run app.py
-   ```
