@@ -1,0 +1,19 @@
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+
+# Local environment and virtual environments
+.env
+catalyst/
+.catalyst/
+
+# Local databases and legacy data
+*.db
+*.sqlite3
+candidates.json
+jobs.json
+memory.json
+
+# IDE and Streamlit
+.vscode/
+.streamlit/

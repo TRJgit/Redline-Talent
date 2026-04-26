@@ -1,0 +1,7 @@
+streamlit
+pydantic
+google-genai
+python-dotenv
+PyMuPDF
+python-docx
+psycopg2-binary

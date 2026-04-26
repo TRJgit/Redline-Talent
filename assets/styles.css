@@ -1,0 +1,32 @@
+:root {
+    --bg-dark: #212121;
+    --card-bg: #191919;
+    --primary-red: #DB3434;
+    --accent-gray: #424242;
+    --text-main: #FAFAFA;
+    --text-dim: #BDBDBD;
+    --success-green: #4CAF50;
+    --warning-amber: #FFC107;
+}
+
+.stApp { background-color: var(--bg-dark); color: var(--text-main); }
+[data-testid="stSidebar"] { background-color: var(--card-bg); border-right: 1px solid var(--accent-gray); }
+
+.main-header { 
+    font-size: 2.8rem; 
+    font-weight: 800; 
+    color: var(--text-main); 
+    margin-bottom: 0.2rem; 
+    letter-spacing: -1px;
+}
+
+.stButton button {
+    border-radius: 4px !important;
+    transition: all 0.2s ease !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+}
+.stButton button[kind="primary"] {
+    background-color: var(--primary-red) !important;
+    color: var(--text-main) !important;
+}
